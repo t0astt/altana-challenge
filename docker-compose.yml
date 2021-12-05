@@ -1,23 +1,29 @@
 version: "3.7"
 services:
-  app:
+  api:
+    container_name: api
     build: .
     command: "python3 -m gunicorn -b 0.0.0.0 --workers=2 app"
     volumes:
-      - ./:/api
+      - .:/api
     expose:
       - 8000
     ports:
       - "8000:8000"
-  db:
-    image: mysql:5.7
-    volumes:
-      - db_data:/var/lib/mysql
     restart: always
+    depends_on:
+      - db
+  db:
+    container_name: database
+    image: mariadb
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-volumes:
-  db_data:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: altana
+      MARIADB_USER: altana
+      MARIADB_PASSWORD: password
