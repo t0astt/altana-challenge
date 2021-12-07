@@ -1,5 +1,6 @@
 from typing import Optional
 from urllib.parse import unquote
+from random import randint
 
 from flask import request, jsonify, make_response
 
@@ -69,13 +70,23 @@ def add_company():
     payload = request.get_json()
     company_name = payload.get("company_name")
     operator_name = payload.get("operator_name")
+    operator_role = payload.get("operator_role")
 
-    print(f"Got company name: {company_name}")
+    new_company = Company(
+        nr_cnpj=randint(100000000, 999999999),
+        sg_uf="SP",
+        in_cpf_cnpj=2,
+        nr_cpf_cnpj_socio=None,
+        cd_qualificacao_socio=16,
+        ds_qualificacao_socio=operator_role,
+        nm_fantasia=company_name,
+        nm_socio=operator_name,
+    )
 
-    return jsonify({
-        "nm_fantasia": company_name,
-        "nm_socio": operator_name,
-    })
+    new_company.query.session.add(new_company)
+    new_company.query.session.commit()
+
+    return jsonify(new_company.to_json())
 
 
 @main.route("/companies/connected", methods=["GET"])
@@ -98,7 +109,6 @@ def connected_companies():
 
     # First, query the DB for operators associated with the specified company.
     all_operators: [Company] = Company.query.filter_by(nm_fantasia=company_name).with_entities(Company.nm_socio).all()
-
     # Next, for each operator in the de-duped operators, query for associated companies.
     connected_companies_: [Company] = []
     for operator in set(all_operators):
