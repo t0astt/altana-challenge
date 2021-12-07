@@ -13,6 +13,8 @@ services:
     restart: always
     depends_on:
       - db
+    networks:
+      - backend
   db:
     container_name: database
     image: mariadb
@@ -22,8 +24,14 @@ services:
       - 3306
     ports:
       - "3306:3306"
+    restart: on-failure
     environment:
       MARIADB_ROOT_PASSWORD: password
       MARIADB_DATABASE: altana
       MARIADB_USER: altana
       MARIADB_PASSWORD: password
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge

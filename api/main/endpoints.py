@@ -1,7 +1,7 @@
 from typing import Optional
 from urllib.parse import unquote
 
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 
 from . import main
 from ..models import Company
@@ -59,6 +59,23 @@ def companies():
             "companies": list(set(o.nm_fantasia for o in all_companies)) # Cast to set, then list, to de-dupe
         }
     )
+
+@main.route("/companies", methods=["POST"])
+def add_company():
+    """
+    Route to add a new company
+    """
+
+    payload = request.get_json()
+    company_name = payload.get("company_name")
+    operator_name = payload.get("operator_name")
+
+    print(f"Got company name: {company_name}")
+
+    return jsonify({
+        "nm_fantasia": company_name,
+        "nm_socio": operator_name,
+    })
 
 
 @main.route("/companies/connected", methods=["GET"])

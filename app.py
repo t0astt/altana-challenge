@@ -87,6 +87,9 @@ class DataLoader:
 
             reader = DictReader(f, dialect=excel_tab)
             for row in reader:
+                for k, v in row.items():
+                    if row[k] == "":
+                        row[k] = None
                 yield row
 
     @staticmethod
