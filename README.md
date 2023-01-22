@@ -1,3 +1,6 @@
+# Notice to Viewer
+The code contained within this repository was my challenge submission for a technical interview. The code within the master branch here is what was submitted - code in other branches was not.
+
 # Altana AI Atlas - Brazil
 
 ## Overview
